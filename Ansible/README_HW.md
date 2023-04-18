@@ -3,7 +3,7 @@
       become: yes
     
       tasks:
-        - name: Building
+        -  name: Building
           ansible.builtin.file:
           path: /home/build/info.txt
           state: file
