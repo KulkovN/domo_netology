@@ -1,14 +1,63 @@
-- name: Home Work Server
+- name: netology-ml
   hosts: all
   become: yes
 
+  vars:
+    packages:
+      - net-tools
+      - git
+      - tree
+      - htop
+      - mc
+      - vim
+  # installing packages
   tasks:
-  - name: Building
-    ansible.builtin.file:
-      path: /home/build/info.txt
-      state: file
-      mode: '0755'
-    tags: netology
-  - name: Testing
-      - shell: ls /home/build
-    tags: netology
+    - name: Task ping
+      ping:
+    - name: Package upd
+      apt:
+        update_cache: yes
+    - name: Install net
+      apt:
+        name: "{{packages}}"
+        state: latest
+    # Creating groups and users
+    - name: Creating group
+      group:
+        name: "{{item}}"
+        state: present
+      loop:
+        - dev
+        - test
+    - name: Creating usr
+      user:
+        name: "{{item.client_item}}"
+        shell: /bin/bash
+        groups: dev, test
+        append: yes
+        home: "/home/{{item.home_dir}}"
+      with_items:
+        - {client_item: devops_1, home_dir: devops_1}
+        - {client_item: test_1, home_dir: test_1}
+
+    # copy file
+    - name: Copy file
+      copy:
+        src: test.txt
+        dest: /home/.ansible/files_dir
+        mode: 0777
+
+
+
+
+#  tasks:
+#  - name: Building
+#    ansible.builtin.file:
+#      path: /home/build/info.txt
+#      state: file
+#      mode: '0755'
+#    tags: netology
+#  - name: Testing
+#      - shell: ls /home/build
+#    tags: netology
+
